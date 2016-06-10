@@ -1,5 +1,5 @@
 {
-  "name": "web-scraping",
+  "name": "web-scraper",
   "version": "0.1.0",
   "description": "Make it easy to scrape the web",
   "main": "index.js",
