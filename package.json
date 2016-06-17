@@ -1,6 +1,6 @@
 {
   "name": "web-scraper",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Make it easy to scrape the web",
   "main": "lib/index.js",
   "scripts": {
