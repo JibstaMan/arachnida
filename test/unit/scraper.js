@@ -44,7 +44,7 @@ test('Scraper', function(nest)
 
             const actual = json;
             const expected = {
-                poster: 'http://www.imdb.com/media/rm3218348288/tt3498820?ref_=tt_ov_i'
+                poster: 'http://www.imdb.com/title/tt3498820/mediaviewer/rm3218348288?ref_=tt_ov_i'
             };
             assert.deepEqual(actual, expected);
             assert.end();
@@ -88,7 +88,7 @@ test('Scraper', function(nest)
             const actual = json;
             const expected = {
                 image: {
-                    link: 'http://www.imdb.com/media/rm3218348288/tt3498820?ref_=tt_ov_i'
+                    link: 'http://www.imdb.com/title/tt3498820/mediaviewer/rm3218348288?ref_=tt_ov_i'
                 }
             };
             assert.deepEqual(actual, expected);
@@ -117,7 +117,7 @@ test('Scraper', function(nest)
             const expected = {
                 show: {
                     title: 'Captain America: Civil War (2016)',
-                    link: 'http://www.imdb.com/media/rm3218348288/tt3498820?ref_=tt_ov_i',
+                    link: 'http://www.imdb.com/title/tt3498820/mediaviewer/rm3218348288?ref_=tt_ov_i',
                     description: "Political interference in the Avengers' activities causes a rift between former allies Captain America and Iron Man."
                 }
             };
@@ -335,4 +335,62 @@ test('Scraper', function(nest)
             assert.end();
         });
     });
+
+    nest.test('params', function(assert)
+    {
+        const data = {
+            url: "http://www.imdb.com/search/title?release_date=2000,2016&sort=year,asc&title=Iron%20Man&title_type=feature",
+            data: {
+                shows: [{
+                    _elem: ".results .detailed",
+                    _filter: '{{filter}}',
+                    title: {
+                        // find the text value of the title for filter function
+                        _elem: "{{title}}",
+                        _value: 'text'
+                    },
+                    _follow: {
+                        // specify where to find the link to follow.
+                        _elem: '{{title}}',
+                        // overwrite the previous title.
+                        title: '.title_wrapper h1',
+                        // also select the director from the other page
+                        director: '[itemprop=director] [itemprop=name]'
+                    }
+                }]
+            },
+            params: {
+                filter: function(show)
+                {
+                    return /^Iron Man($| )/.test(show.title);
+                },
+                title: '.title > a'
+            }
+        };
+
+        webScraper(data, function(err, json)
+        {
+            assert.ifErr(err);
+
+            const actual = json;
+            const expected = {
+                shows: [
+                    {
+                        title: 'Iron Man (2008)',
+                        director: 'Jon Favreau'
+                    },
+                    {
+                        title: 'Iron Man 2 (2010)',
+                        director: 'Jon Favreau'
+                    },
+                    {
+                        title: 'Iron Man Three (2013)',
+                        director: 'Shane Black'
+                    }
+                ]
+            };
+            assert.deepEqual(actual, expected);
+            assert.end();
+        });
+    })
 });

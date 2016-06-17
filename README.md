@@ -317,3 +317,66 @@ Filter is especially useful in combination with `_filter`, when following all fo
     ]
 }
 ```
+
+#### Parameters
+
+An important idea behind the web scraper is the ability to store the scraping configuration within a database. However, functions cannot be stored within a database. To solve this problem, it's possible to specify the functions separately, within a `parameters` object.
+ 
+```javascript
+{
+    url: "http://example.com/search?title=Iron Man",
+    // data is loaded from a database, so it doesn't have any functions.
+    data: {
+        shows: [{
+            // select all movies
+            _elem: ".movie", 
+            // find these properties
+            title: '.title,
+            thumb: 'img',
+            rating: {
+                _elem: "a",
+                _follow: "#main_movie .rating"
+            },
+            // use the filter property from the params object.
+            _filter: '{{filter}}',
+            _follow: {
+                 // selector for the link to follow.
+                 _elem: ".title a",
+                 // selector within followed page.
+                 image: "#big_picture"
+             }
+        }]
+    },
+    params: { // or parameters
+        // specify the filter function, which will be set instead of `{{filter}}`
+        filter: function(show)
+        {
+            return /^Iron Man/.test(show.title);
+        }
+    }
+}
+
+// output:
+{
+    shows: [
+        {
+            title: "Iron Man" ,
+            thumb: "http://static.example.com/iron-man/small-image.jpg",
+            rating: "8.7",
+            image: "http://static.example.com/iron-man/main-image.jpg"
+        },
+        {
+            title: "Iron Man 2" ,
+            thumb: "http://static.example.com/iron-man-2/small-image.jpg",
+            rating: "7.6",
+            image: "http://static.example.com/iron-man-2/main-image.jpg"
+        },
+        {
+            title: "Iron Man 3" ,
+            thumb: "http://static.example.com/iron-man-3/small-image.jpg",
+            rating: "8.4",
+            image: "http://static.example.com/iron-man-3/main-image.jpg"
+        }
+    ]
+}
+```
