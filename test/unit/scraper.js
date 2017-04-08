@@ -170,7 +170,7 @@ test('Scraper', function(nest)
             url: "http://www.imdb.com/search/title?release_date=2000,2016&sort=year,asc&title=Iron%20Man&title_type=feature",
             data: {
                 titles: [{
-                    _elem: ".title > a",
+                    _elem: ".lister-item-header > a",
                     _value: 'text'
                 }]
             }
@@ -187,8 +187,9 @@ test('Scraper', function(nest)
                     'The Iron Man',
                     'Iron Man',
                     'Iron Man 2',
-                    'Iron Man 3',
-                    'Iron Man: The Sean Fallon Story'
+                    'The Man with the Iron Fists',
+                    'Adam Ahani',
+                    'Iron Man Three',
                 ]
             };
             assert.deepEqual(actual, expected);
@@ -202,12 +203,12 @@ test('Scraper', function(nest)
             url: "http://www.imdb.com/search/title?release_date=2000,2016&sort=year,asc&title=Iron%20Man&title_type=feature",
             data: {
                 shows: [{
-                    _elem: '.results .detailed',
+                    _elem: '.lister-list .lister-item-content',
                     title: {
-                        _elem: ".title > a",
+                        _elem: ".lister-item-header > a",
                         _value: 'text'
                     },
-                    year: '.title .year_type'
+                    year: '.lister-item-header .lister-item-year'
                 }]
             }
         };
@@ -236,13 +237,17 @@ test('Scraper', function(nest)
                         year: '(2010)'
                     },
                     {
-                        title: 'Iron Man 3',
-                        year: '(2013)'
+                        title: 'The Man with the Iron Fists',
+                        year: '(2012)'
                     },
                     {
-                        title: 'Iron Man: The Sean Fallon Story',
-                        year: '(2016)'
-                    }
+                        title: 'Adam Ahani',
+                        year: '(2012)'
+                    },
+                    {
+                        title: 'Iron Man Three',
+                        year: '(2013)'
+                    },
                 ]
             };
             assert.deepEqual(actual, expected);
@@ -256,7 +261,7 @@ test('Scraper', function(nest)
             url: "http://www.imdb.com/search/title?release_date=2000,2016&sort=year,asc&title=Iron%20Man&title_type=feature",
             data: {
                 titles: [{
-                    _elem: ".results .title > a",
+                    _elem: ".lister-list .lister-item-header > a",
                     _follow: '.title_wrapper h1'
                 }]
             }
@@ -273,8 +278,9 @@ test('Scraper', function(nest)
                     'The Iron Man (2006)',
                     'Iron Man (2008)',
                     'Iron Man 2 (2010)',
+                    'The Man with the Iron Fists (2012)',
+                    'Adam Ahani (2012)',
                     'Iron Man Three (2013)',
-                    'Iron Man: The Sean Fallon Story (2016)'
                 ]
             };
             assert.deepEqual(actual, expected);
@@ -288,19 +294,19 @@ test('Scraper', function(nest)
             url: "http://www.imdb.com/search/title?release_date=2000,2016&sort=year,asc&title=Iron%20Man&title_type=feature",
             data: {
                 shows: [{
-                    _elem: ".results .detailed",
+                    _elem: ".lister-list .lister-item-content",
                     _filter: function(show)
                     {
                         return /^Iron Man($| )/.test(show.title);
                     },
                     title: {
                         // find the text value of the title for filter function
-                        _elem: ".title > a",
+                        _elem: ".lister-item-header > a",
                         _value: 'text'
                     },
                     _follow: {
                         // specify where to find the link to follow.
-                        _elem: '.title > a',
+                        _elem: '.lister-item-header > a',
                         // overwrite the previous title.
                         title: '.title_wrapper h1',
                         // also select the director from the other page
@@ -342,7 +348,7 @@ test('Scraper', function(nest)
             url: "http://www.imdb.com/search/title?release_date=2000,2016&sort=year,asc&title=Iron%20Man&title_type=feature",
             data: {
                 shows: [{
-                    _elem: ".results .detailed",
+                    _elem: ".lister-list .lister-item-content",
                     _filter: '{{filter}}',
                     title: {
                         // find the text value of the title for filter function
@@ -364,7 +370,7 @@ test('Scraper', function(nest)
                 {
                     return /^Iron Man($| )/.test(show.title);
                 },
-                title: '.title > a'
+                title: '.lister-item-header > a'
             }
         };
 
