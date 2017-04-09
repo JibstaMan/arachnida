@@ -398,5 +398,5 @@ test('Scraper', function(nest)
             assert.deepEqual(actual, expected);
             assert.end();
         });
-    })
+    });
 });
