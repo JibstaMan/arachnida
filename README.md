@@ -170,7 +170,7 @@ If you want more values then just the default value, you can specfy an object. T
 
 ##### Follow
 
-A very interesting feature is the ability to follow a link to a differnet page and retrieve values from this page as well. Thes retrieved values are returned within the same object.
+A very interesting feature is the ability to follow a link to a different page and retrieve values from this page as well. These retrieved values are returned within the same object.
 
 ```javascript
 // input:
@@ -262,7 +262,7 @@ It is also possible to filter the result, either using a function or an object. 
 }
 ```
 
-Filter is especially useful in combination with `_filter`, when following all found elements will increase the amount of HTTP requests performed.
+Filter is especially useful in combination with `_follow`, when following all found elements would increase the amount of HTTP requests performed.
 
 ```javascript
 {
@@ -378,5 +378,76 @@ An important idea behind the web scraper is the ability to store the scraping co
             image: "http://static.example.com/iron-man-3/main-image.jpg"
         }
     ]
+}
+```
+
+### Troubleshooing config
+
+The are multiple options to help you troubleshoot your scraping data.
+
+##### Testing
+When a selector couldn't find any element, a message will be put inside the JSON response. This makes it really easy to see which selector failed.
+
+```javascript
+{
+    url: "...",
+    data: { ... }
+    config: {
+        testing: true
+    }
+}
+```
+
+##### enableLogging
+This allows the web scraper to log warnings to the console.
+
+```javascript
+{
+    url: "...",
+    data: { ... }
+    config: {
+        enableLogging: true
+    }
+}
+```
+
+##### Logger
+Allows you to specify your own log function. `enableLogging` isn't necessary when specifying a logger.
+
+This is mainly useful if you use a logger with log levels. You can choose which log level to give to the scraper.
+
+```javascript
+{
+    url: "...",
+    data: { ... }
+    config: {
+        logger: console.error
+    }
+}
+```
+
+##### separateErrors
+
+Similar to testing, only instead of including the error messages inside the JSON itself, the JSON will receive separate error sections with actual error objects.
+
+```javascript
+{
+    url: "...",
+    data: { ... }
+    config: {
+        separateErrors: true
+    }
+}
+```
+
+##### HTML
+
+If you're testing different configs or different stages within the same config, it would be ineffecient to keep sending HTTP requests. You can specify your own HTML, so the scraper won't need to make the HTTP request anymore.
+
+```javascript
+{
+    url: "...",
+    html: "</>"
+    data: { ... }
 }
 ```
