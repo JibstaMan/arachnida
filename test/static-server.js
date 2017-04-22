@@ -1,12 +1,12 @@
-module.exports = function()
-{
-    return new Promise((resolve) => {
-        const path = require('path');
-        const express = require('express');
-        const app = express();
+const path = require('path');
+const express = require('express');
 
-        app.use(express.static(path.join(__dirname, 'fixtures')));
+module.exports = function staticServer() {
+  return new Promise((resolve) => {
+    const app = express();
 
-        app.listen(8888, resolve);
-    });
+    app.use(express.static(path.join(__dirname, 'fixtures')));
+
+    app.listen(8888, resolve);
+  });
 };
