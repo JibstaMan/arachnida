@@ -59,6 +59,52 @@ test('Scraper', (nest) => {
     });
   });
 
+  nest.test('html attribute', (assert) => {
+    const data = {
+      url : `${url}/title/tt3498820/`,
+      data: {
+        title: {
+          _elem : '.title_wrapper h1',
+          _value: 'html',
+        },
+      },
+    };
+
+    webScraper(data, (err, json) => {
+      assert.ifErr(err);
+
+      const actual = json;
+      const expected = {
+        title: '<h1 itemprop="name" class="">Captain America: Civil War <span id="titleYear">(<a href="/year/2016/?ref_=tt_ov_inf">2016</a>)</span> </h1>',
+      };
+      assert.deepEqual(actual, expected);
+      assert.end();
+    });
+  });
+
+  nest.test('tag attribute', (assert) => {
+    const data = {
+      url : `${url}/title/tt3498820/`,
+      data: {
+        title: {
+          _elem : '.title_wrapper h1',
+          _value: 'tag',
+        },
+      },
+    };
+
+    webScraper(data, (err, json) => {
+      assert.ifErr(err);
+
+      const actual = json;
+      const expected = {
+        title: '<h1 itemprop="name" class=""></h1>',
+      };
+      assert.deepEqual(actual, expected);
+      assert.end();
+    });
+  });
+
   nest.test('string', (assert) => {
     const data = {
       url : `${url}/title/tt3498820/`,
@@ -266,7 +312,7 @@ test('Scraper', (nest) => {
     webScraper(data, (err, json) => {
       assert.ifErr(err);
 
-      if (json && json.titles) {
+      if (json && json.titles && _.isArray(json.titles)) {
         json.titles.sort();
       }
       const actual = json;
@@ -292,13 +338,13 @@ test('Scraper', (nest) => {
       data: {
         shows: [{
           _elem: '.lister-list .lister-item-content',
-          _filter(show) {
-            return /^Iron Man($| )/.test(show.title);
-          },
           title: {
             // find the text value of the title for filter function
             _elem : '.lister-item-header > a',
             _value: 'text',
+          },
+          _filter(show) {
+            return /^Iron Man($| )/.test(show.title);
           },
           _follow: {
             // specify where to find the link to follow.
@@ -345,13 +391,13 @@ test('Scraper', (nest) => {
       url : `${url}/search/title.html${queryString}`,
       data: {
         shows: [{
-          _elem  : '.lister-list .lister-item-content',
-          _filter: '{{filter}}',
-          title  : {
+          _elem: '.lister-list .lister-item-content',
+          title: {
             // find the text value of the title for filter function
             _elem : '{{title}}',
             _value: 'text',
           },
+          _filter: '{{filter}}',
           _follow: {
             // specify where to find the link to follow.
             _elem   : '{{title}}',
