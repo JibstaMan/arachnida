@@ -75,7 +75,7 @@ test('Scraper', (nest) => {
 
       const actual = json;
       const expected = {
-        title: '<h1 itemprop="name" class="">Captain America: Civil War <span id="titleYear">(<a href="/year/2016/?ref_=tt_ov_inf">2016</a>)</span> </h1>',
+        title: '<h1 itemprop="name" class="">Captain America: Civil War <span id="titleYear">(<a href="/year/2016/?ref_=tt_ov_inf">2016</a>)</span></h1>',
       };
       assert.deepEqual(actual, expected);
       assert.end();
@@ -175,11 +175,22 @@ test('Scraper', (nest) => {
     });
   });
 
-  nest.test('array', (assert) => {
+  nest.test('object filter', (assert) => {
     const data = {
       url : `${url}/title/tt3498820/`,
       data: {
-        cast: ['.cast_list span.itemprop'],
+        captainAmerica: {
+          title      : '.title_wrapper h1',
+          link       : '.poster a',
+          description: '.summary_text',
+          _filter    : (json) => json.title === 'Captain America: Civil War (2016)',
+        },
+        ironMan: {
+          title      : '.title_wrapper h1',
+          link       : '.poster a',
+          description: '.summary_text',
+          _filter    : (json) => json.title === 'Iron Man (2008)',
+        },
       },
     };
 
@@ -188,24 +199,71 @@ test('Scraper', (nest) => {
 
       const actual = json;
       const expected = {
-        cast: [
-          'Chris Evans',
-          'Robert Downey Jr.',
-          'Scarlett Johansson',
-          'Sebastian Stan',
-          'Anthony Mackie',
-          'Don Cheadle',
-          'Jeremy Renner',
-          'Chadwick Boseman',
-          'Paul Bettany',
-          'Elizabeth Olsen',
-          'Paul Rudd',
-          'Emily VanCamp',
-          'Tom Holland',
-          'Daniel Brühl',
-          'Frank Grillo',
-        ],
+        captainAmerica: {
+          title      : 'Captain America: Civil War (2016)',
+          link       : `${url}/title/tt3498820/mediaviewer/rm3218348288?ref_=tt_ov_i`,
+          description: "Political interference in the Avengers' activities causes a rift " +
+          'between former allies Captain America and Iron Man.',
+        },
+        ironMan: null,
       };
+      assert.deepEqual(actual, expected);
+      assert.end();
+    });
+  });
+
+  nest.test('object follow', (assert) => {
+    const data = {
+      url : `${url}/search/title.html${queryString}`,
+      data: {
+        title  : '.lister-list .lister-item-header',
+        _follow: {
+          _elem   : '.lister-item-header > a',
+          director: '[itemprop=director] [itemprop=name]',
+        },
+      },
+    };
+
+    webScraper(data, (err, json) => {
+      assert.ifErr(err);
+
+      const actual = json;
+      const expected = {
+        title   : '1. David Knight: Iron Man of Enduro (2004)',
+        director: 'Michael McKnight',
+      };
+      assert.deepEqual(actual, expected);
+      assert.end();
+    });
+  });
+
+  nest.test('array', (assert) => {
+    const data = {
+      url : `${url}/title/tt3498820/`,
+      data: ['.cast_list span.itemprop'],
+    };
+
+    webScraper(data, (err, json) => {
+      assert.ifErr(err);
+
+      const actual = json;
+      const expected = [
+        'Chris Evans',
+        'Robert Downey Jr.',
+        'Scarlett Johansson',
+        'Sebastian Stan',
+        'Anthony Mackie',
+        'Don Cheadle',
+        'Jeremy Renner',
+        'Chadwick Boseman',
+        'Paul Bettany',
+        'Elizabeth Olsen',
+        'Paul Rudd',
+        'Emily VanCamp',
+        'Tom Holland',
+        'Daniel Brühl',
+        'Frank Grillo',
+      ];
       assert.deepEqual(actual, expected);
       assert.end();
     });

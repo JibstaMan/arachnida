@@ -123,20 +123,16 @@ test('Config', (nest) => {
       data: {
         shows: [{
           _elem: '.title > a',
-          _filter(show) {
-            return /^Iron Man($| )/.test(show.title);
-          },
           title: {
-            // find the text value of the title for filter function
             _elem : '.lister-item-header > a',
             _value: 'text',
           },
+          _filter(show) {
+            return /^Iron Man($| )/.test(show.title);
+          },
           _follow: {
-            // specify where to find the link to follow.
             _elem   : '.lister-item-header > a',
-            // overwrite the previous title.
             title   : '.title_wrapper h1',
-            // also select the director from the other page
             director: '[itemprop=director] [itemprop=name]',
           },
         }],
@@ -180,15 +176,18 @@ test('Config', (nest) => {
 
     webScraper(data)
       .then((json) => {
-        const actual = json;
+        const actual = json.shows[0];
         const expected = {
-          errors: {
-            shows: new Error("Couldn't find '.title > h1'"),
+          director: '',
+          errors  : {
+            title   : new Error("Couldn't find '.title > h1'"),
+            director: new Error("Couldn't find '[itemprop=dirlector] [itemprop=name]'"),
           },
-          shows: [],
+          title: '',
         };
         assert.deepEqual(actual, expected);
-        assert.equal(actual.errors.shows.message, expected.errors.shows.message);
+        assert.equal(actual.errors.title.message, expected.errors.title.message);
+        assert.equal(actual.errors.director.message, expected.errors.director.message);
         assert.end();
       })
       .catch(catchErr(assert));
@@ -216,16 +215,17 @@ test('Config', (nest) => {
         const expected = {
           captain: {
             america: {
-              // this might not be expected behavior
-              errors: {
-                civilWar: new Error("Couldn't find '.title > h1'"),
+              civilWar: {
+                errors: {
+                  title: new Error("Couldn't find '.title > h1'"),
+                },
+                title: '',
               },
-              civilWar: {},
             },
           },
         };
         assert.deepEqual(actual, expected);
-        const message = 'captain.america.errors.title.message';
+        const message = 'captain.america.civilWar.errors.title.message';
         assert.equal(_.get(actual, message), _.get(expected, message));
         assert.end();
       })
