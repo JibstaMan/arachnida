@@ -103,6 +103,18 @@ test('Normalize', (nest) => {
     assert.end();
   });
 
+  nest.test('string param string replace input', (assert) => {
+    const data = '{{wrapper}} h1';
+    const params = {
+      wrapper: '.title_wrapper',
+    };
+
+    const actual = normalize(data, params);
+    const expected = '.title_wrapper h1';
+    assert.deepEqual(actual, expected);
+    assert.end();
+  });
+
   nest.test('nested params object', (assert) => {
     const data = {
       title: '{{shows.title}}',
