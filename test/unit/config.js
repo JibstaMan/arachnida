@@ -1,16 +1,14 @@
 /* eslint-disable no-sync */
 
 const test = require('tape');
+const StdOutFixture = require('fixture-stdout');
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const express = require('express');
 const webScraper = require('../../lib/index');
 
 const url = 'http://localhost:8888';
 const cache = {};
-
-let server = null;
 
 function getData(filePath, data) {
   let html;
@@ -56,15 +54,7 @@ test('Config', (nest) => {
       .catch(catchErr(assert));
   });
 
-  nest.test('start test server', (assert) => {
-    const app = express();
-
-    app.use(express.static('test/fixtures'));
-
-    server = app.listen(8888, () => assert.end());
-  });
-
-  nest.test('inline errors', (assert) => {
+  nest.test('inline errors > list', (assert) => {
     const data = getData('search/title', {
       data: {
         titles: [{
@@ -232,8 +222,137 @@ test('Config', (nest) => {
       .catch(catchErr(assert));
   });
 
-  nest.test('stop test server', (assert) => {
-    server.close();
-    assert.end();
+  nest.test('separate errors and testing', (assert) => {
+    const data = getData('search/title', {
+      data: {
+        titles: [{
+          _elem : '.title > a',
+          _value: 'text',
+        }],
+      },
+      config: {
+        separateErrors: true,
+        testing       : true,
+      },
+    });
+
+    webScraper(data)
+      .then((json) => {
+        const actual = json;
+        const expected = {
+          errors: {
+            titles: new Error("Couldn't find '.title > a'"),
+          },
+          titles: "Couldn't find '.title > a'",
+        };
+        assert.deepEqual(actual, expected);
+        assert.end();
+      })
+      .catch(catchErr(assert));
+  });
+
+  nest.test('inline errors > string (catch)', (assert) => {
+    const data = getData('search/title', {
+      data  : '.title > a',
+      config: {
+        testing: true,
+      },
+    });
+
+    webScraper(data)
+      .then(catchErr(assert))
+      .catch((err) => {
+        const actual = err;
+        const expected = new Error("Couldn't find '.title > a'");
+        assert.equal(_.isError(actual), true, 'should be an error');
+        assert.equal(actual.message, expected.message, 'should have correct error message');
+        assert.end();
+      });
+  });
+
+  nest.test('separate errors > string (catch)', (assert) => {
+    const data = getData('search/title', {
+      data  : '.title > a',
+      config: {
+        separateErrors: true,
+      },
+    });
+
+    webScraper(data)
+      .then(catchErr(assert))
+      .catch((err) => {
+        const actual = err;
+        const expected = new Error("Couldn't find '.title > a'");
+        assert.equal(_.isError(actual), true, 'should be an error');
+        assert.equal(actual.message, expected.message, 'should have correct error message');
+        assert.end();
+      });
+  });
+
+  nest.test('enableErrors', (assert) => {
+    const logs = [];
+    const fixture = new StdOutFixture({ stream: process.stderr });
+    fixture.capture((log) => {
+      logs.push(log.replace(/\n$/, ''));
+    });
+    const data = getData('search/title', {
+      data: {
+        titles: [{
+          _elem : '.title > a',
+          _value: 'text',
+        }],
+      },
+      config: {
+        enableLogging: true,
+      },
+    });
+
+    webScraper(data)
+      .then((json) => {
+        const actualLogs = logs;
+        const expectedLogs = [
+          "Couldn't find '.title > a'",
+        ];
+        const actual = json;
+        const expected = {
+          titles: [],
+        };
+        assert.deepEqual(actualLogs, expectedLogs);
+        assert.deepEqual(actual, expected);
+        fixture.release();
+        assert.end();
+      })
+      .catch(catchErr(assert));
+  });
+
+  nest.test('logger', (assert) => {
+    const logs = [];
+    const data = getData('search/title', {
+      data: {
+        titles: [{
+          _elem : '.title > a',
+          _value: 'text',
+        }],
+      },
+      config: {
+        logger: (log) => logs.push(log),
+      },
+    });
+
+    webScraper(data)
+      .then((json) => {
+        const actualLogs = logs;
+        const expectedLogs = [
+          "Couldn't find '.title > a'",
+        ];
+        const actual = json;
+        const expected = {
+          titles: [],
+        };
+        assert.deepEqual(actualLogs, expectedLogs);
+        assert.deepEqual(actual, expected);
+        assert.end();
+      })
+      .catch(catchErr(assert));
   });
 });

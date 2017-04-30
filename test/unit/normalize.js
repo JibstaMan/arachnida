@@ -2,6 +2,18 @@ const test = require('tape');
 const normalize = require('../../lib/normalize');
 
 test('Normalize', (nest) => {
+  nest.test('undefined input', (assert) => {
+    const data = undefined;
+    const params = {
+      title: '.title_wrapper h1',
+    };
+
+    const actual = normalize(data, params);
+    const expected = undefined;
+    assert.deepEqual(actual, expected);
+    assert.end();
+  });
+
   nest.test('string input', (assert) => {
     const data = '{{title}}';
     const params = {
