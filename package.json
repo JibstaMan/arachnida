@@ -14,6 +14,9 @@
     "type": "git",
     "url": "https://github.com/JibstaMan/arachnida.git"
   },
+  "engines": {
+    "node": ">=6"
+  },
   "main": "lib/index.js",
   "scripts": {
     "test": "node test/index.js | tap-spec",
