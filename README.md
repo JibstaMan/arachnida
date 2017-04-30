@@ -1,10 +1,11 @@
 # Arachnida
 Makes it easy to scrape the web for specific information.
 
-[![npm package](https://nodei.co/npm/arachnida.png)](https://nodei.co/npm/request/)
+[![npm package](https://nodei.co/npm/arachnida.png)](https://nodei.co/npm/arachnida/)
 
 [![Build Status](https://travis-ci.org/JibstaMan/arachnida.svg?branch=master)](https://travis-ci.org/JibstaMan/arachnida)
 [![Coverage Status](https://coveralls.io/repos/github/JibstaMan/arachnida/badge.svg?branch=master)](https://coveralls.io/github/JibstaMan/arachnida?branch=master)
+[![Dependency Status](https://david-dm.org/JibstaMan/arachnida/status.svg)](https://david-dm.org/JibstaMan/arachnida)
 
 ## Features
 
