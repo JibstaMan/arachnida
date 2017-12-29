@@ -331,4 +331,56 @@ test('Scraper basics', (nest) => {
       assert.end();
     });
   });
+
+  nest.test('remove', (assert) => {
+    const data = {
+      url : `${url}/title/tt3498820/`,
+      data: {
+        _elem  : '.slate .caption > div:first-child',
+        _remove: 'span',
+        _value : 'text',
+      },
+    };
+
+    webScraper(data, (err, json) => {
+      assert.ifErr(err, "doesn't return an error");
+
+      const actual = json;
+      const expected = '1:01  Trailer';
+      assert.deepEqual(actual, expected);
+      assert.end();
+    });
+  });
+
+  nest.test('remove inside list', (assert) => {
+    const data = {
+      url : `${url}/search/title.html${queryString}`,
+      data: {
+        titles: [{
+          _elem  : '.lister-item-header',
+          _remove: 'span',
+          _value : 'text',
+        }],
+      },
+    };
+
+    webScraper(data, (err, json) => {
+      assert.ifErr(err, "doesn't return an error");
+
+      const actual = json;
+      const expected = {
+        titles: [
+          'David Knight: Iron Man of Enduro',
+          'The Iron Man',
+          'Iron Man',
+          'Iron Man 2',
+          'The Man with the Iron Fists',
+          'Adam Ahani',
+          'Iron Man Three',
+        ],
+      };
+      assert.deepEqual(actual, expected);
+      assert.end();
+    });
+  });
 });

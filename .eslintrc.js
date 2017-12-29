@@ -22,6 +22,7 @@ module.exports = {
       'allow': [
         '_elem',
         '_value',
+        '_remove',
         '_filter',
         '_follow',
       ],

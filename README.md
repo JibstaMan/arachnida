@@ -64,6 +64,7 @@ webScraper(options, (err, json) => {
     * [Attributes](#attributes)
     * [Nesting](#nesting)
     * [Lists](#lists)
+    * [Removing unwanted elements](#removing-unwanted-elements)
     * [Following links](#following-links)
     * [Filter](#filter)
     * [Filter before follow](#filter-before-follow)
@@ -138,7 +139,7 @@ data: {
 
 This would be a good time to take a closer look at private properties. Any property that starts with `_` is private, which means it is used for query purposes only. It will not be present in the returned JSON object.
 
-In the above example, we see a combination of `_elem` and `_value`. The `_elem` property determines which element to select and the `_value` attribute determines the attribute to retrieve as the value. Since there are no other properties inside the data query, the returned JSON is a string, containing the tite of the `.glossaryLink`. In essence, the `_elem` and `_value` combination allows to retrieve a custom attribute without any further nesting inside the returned JSON.
+In the above example, we see a combination of `_elem` and `_value`. The `_elem` property determines which element to select and the `_value` attribute determines the attribute to retrieve as the value. Since there are no other properties inside the data query, the returned JSON is a string, containing the title of the `.glossaryLink`. In essence, the `_elem` and `_value` combination allows to retrieve a custom attribute without any further nesting inside the returned JSON.
 
 #### Attributes
 
@@ -209,6 +210,24 @@ data: {
 ```
 
 When you specify an array, it's assumed that the selector inside (either string or `_elem` property) will retrieve multiple elements. It will then iterate over each element and process the rest of the data query for each element individually.
+
+#### Removing unwanted elements
+
+In some cases, you'll want to retrieve the text of a text node, but the parent element also has another HTML tag. This is tough, because you can't select a text node using CSS selectors. The solution is the `_remove` property.
+
+Let's assume that the icons inside the top nav were simple character (e.g. `<`, `^` and `>`).
+```js
+data: [{
+  _elem  : '#wikiArticle .prevnext:first-child span'
+  _remove: 'i',
+  _value : 'text',
+}]
+//=> [
+//  'Previous',
+//  'Overview: Getting started with the web',
+//  'Next',
+//]
+```
 
 #### Following links
 
