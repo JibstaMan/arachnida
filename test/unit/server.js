@@ -1,15 +1,15 @@
 const test = require('tape');
-const express = require('express');
+const testServer = require('../test-server');
 
 let server = null;
 
 function start() {
   test('start server', (assert) => {
-    const app = express();
-
-    app.use(express.static('test/fixtures'));
-
-    server = app.listen(8888, () => assert.end());
+    testServer()
+      .then((startedServer) => {
+        server = startedServer;
+        assert.end();
+      });
   });
 }
 

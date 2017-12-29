@@ -67,6 +67,7 @@ webScraper(options, (err, json) => {
     * [Following links](#following-links)
     * [Filter](#filter)
     * [Filter before follow](#filter-before-follow)
+* [Authentication](#authentication)
 * [Parameters](#parameters)
 * [Configuration](#configuration)
 
@@ -304,7 +305,30 @@ data: {
 //}
 ```
 
-#### Parameters
+## Authentication
+
+On many occasions, the data you want to retrieve is only available to users that have logged in. Arachnida supports authentication using the `auth` property.
+
+When the `auth` property is set, Arachnida will make an extra request to perform the authentication. This request uses everything specified inside of the `auth` property, so you can use all [Request options](https://github.com/request/request#requestoptions-callback). Arachnida keeps track of the cookies.
+
+The `auth` object currently requires a special property called `sessionId`, which identifies the session. When the request has been authenticated before, `auth: { sessionId: 'session' }` will reuse the cookie jar from the previous authentication, making all other `auth` properties optional.
+
+Let's pretend the MDN documentation was protected using a simple login form.
+```
+data: 'article .glossaryLink'
+auth: {
+  sessionId: 'mdn-test-user',
+  url : 'https://developer.mozilla.org/login',
+  // method: 'POST' is the default, but you can overwrite it here.
+  form: {
+    username: 'test',
+    password: 'password',
+  },
+}
+//=> 'https://developer.mozilla.org/en-US/docs/Glossary/JavaScript'
+```
+
+## Parameters
 
 An important idea behind Arachnida is the ability to store the scraping configuration within a database. But since functions cannot be stored within a database, it's possible to specify a separate object containing dynamic information, either called `parameters` or `params`.
 
@@ -340,11 +364,11 @@ params: {
 //=> same response as above.
 ```
 
-### Troubleshooing config
+## Troubleshooing config
 
 The are multiple options to help you troubleshoot your data query.
 
-##### Testing
+#### Testing
 
 When a selector couldn't find any element, a message will be put inside the JSON response. This makes it really easy to see which selector failed. Currently, this only works when the data is an object. If you pass a string, you will get an error (or Promise rejection) with the same error message.
 
@@ -360,7 +384,7 @@ config: {
 //}
 ```
 
-##### enableLogging
+#### enableLogging
 
 This allows Arachnida to log warnings to the console (using `console.warn`).
 
@@ -370,7 +394,7 @@ config: {
 }
 ```
 
-##### Logger
+#### Logger
 
 Allows you to specify your own log function. `enableLogging: true` isn't necessary when specifying a logger.
 
@@ -382,7 +406,7 @@ config: {
 }
 ```
 
-##### separateErrors
+#### separateErrors
 
 Similar to testing, only instead of including the error messages inside the JSON itself, the JSON will receive separate error sections with actual Error objects. This can be combined with `testing: true`.
 

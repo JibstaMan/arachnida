@@ -11,7 +11,7 @@ test('Scraper basics', (nest) => {
 
     webScraper(data, (err, json) => {
       const actualErr = err;
-      const expectedErr = new Error('Please specify the url. Even when passing in HTML, ' +
+      const expectedErr = new Error('Please specify the `url`. Even when passing in HTML, ' +
         "it's still necessary to make relative paths absolute.");
       assert.equal(_.isError(actualErr), true,
         'should be an error');

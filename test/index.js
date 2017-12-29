@@ -7,6 +7,7 @@ require('./unit/scraper-basics');
 require('./unit/scraper-filter');
 require('./unit/scraper-follow');
 require('./unit/config');
+require('./unit/session');
 
 testServer.stop();
 
