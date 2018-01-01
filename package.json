@@ -1,6 +1,6 @@
 {
   "name": "arachnida",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Makes it easy to scrape the web for specific information.",
   "author": "JibstaMan <volkljibster@gmail.com>",
   "license": "MIT",
