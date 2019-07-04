@@ -1,4 +1,6 @@
 # Arachnida
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/JibstaMan/arachnida.svg)](https://greenkeeper.io/)
 Makes it easy to scrape the web for specific information.
 
 [![npm package](https://nodei.co/npm/arachnida.png)](https://nodei.co/npm/arachnida/)
